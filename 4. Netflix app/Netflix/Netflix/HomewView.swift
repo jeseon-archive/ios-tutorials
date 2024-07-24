@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct HomewView: View {
+    @State var bigBanner: String = ""
+    @State var dramas: [Drama] = []
+    
     var body: some View {
         ScrollView{
             
@@ -23,7 +26,7 @@ struct HomewView: View {
                     .padding()
             }
             
-            AsyncImage(url: URL(string: "https://ios-poster-json.s3.ap-northeast-2.amazonaws.com/posters/0BigImagePoster/bigPoster.png")) { image in
+            AsyncImage(url: URL(string: bigBanner)) { image in
                 image
                     .resizable()
                     .cornerRadius(10)
@@ -56,9 +59,29 @@ struct HomewView: View {
                     .buttonStyle(.bordered)
                 }
                 .padding()
+                
+                
             }
             .background(.black)
             .foregroundStyle(.white)
+            
+            if dramas.count == 0{
+                ProgressView()
+                    .tint(Color.black)
+                    .task{
+                        let url = URL(string:"https://gvec03gvkf.execute-api.ap-northeast-2.amazonaws.com/")!
+                        
+                        let (data, _) = try! await URLSession.shared.data(from: url)
+                        let decoder = JSONDecoder()
+                        let dramaCollection = try! decoder.decode(DramaCollection.self, from: data)
+                        
+                        bigBanner = dramaCollection.bigBanner
+                        dramas = dramaCollection.dramas
+                    }
+            }else{
+                Text("Dramas 장착 완료")
+            }
+            
         }
     }
 }
