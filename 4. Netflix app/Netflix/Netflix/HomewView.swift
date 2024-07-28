@@ -79,7 +79,35 @@ struct HomewView: View {
                         dramas = dramaCollection.dramas
                     }
             }else{
-                Text("Dramas 장착 완료")
+
+                ForEach(dramas, id: \.categoryTitle){ drama in
+                    VStack(alignment: .leading){
+                        Text(drama.categoryTitle)
+                            .font(.title)
+                        
+                        ScrollView(.horizontal)
+                        {
+                            HStack{
+                                ForEach(drama.posters, id: \.self)
+                                {
+                                    posterUrlString in
+                                    let url = URL(string: posterUrlString)
+                                    
+                                    AsyncImage(url: url){
+                                        image in
+                                            image
+                                                .resizable()
+                                    }placeholder: {
+                                        ProgressView()
+                                    }
+                                    .frame(width: 100, height: 175)
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+                
             }
             
         }
